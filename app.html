@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="chatApp">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="assets/js/mqttws31.min.js"></script>
+    <script src="assets/js/Math.uuid.js"></script>
+</head>
+
+<body ng-controller="chatAppController">
+    <nav class="navbar navbar-inverse navbar-fixed-top" ng-show="!vm.server.connected">
+        <div class="container">
+            <div class="navbar-header">
+                <span class="navbar-brand">Connect to MQTT Server</span>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <form class="navbar-form navbar-right">
+                    <div class="form-group">
+                        <input type="text" placeholder="Server Address" class="form-control" ng-model="vm.server.address">
+                    </div>
+                    <div class="form-group">
+                        <input type="number" placeholder="Port" class="form-control" ng-model="vm.server.port">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" placeholder="Channel" class="form-control" ng-model="vm.server.channel">
+                    </div>
+                    <button type="submit" class="btn btn-success" ng-click="action.connectToMQTT()">
+                        Connect
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading" ng-show="vm.server.connected">
+                Subscribed to channel: <b>{{ vm.server.channel }}</b> @<b>{{ vm.server.address }}</b>:<b>{{ vm.server.port }}</b>
+            </div>
+            <div class="panel-body">
+                <form>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Enter message here..." ng-model="vm.messageToSend" ng-disabled="!vm.server.connected">
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-primary" ng-disabled="!vm.server.connected" ng-click="action.sendMessage()">Send</button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <ul class="list-group">
+            <li class="list-group-item" ng-repeat="message in vm.messages">
+                <b ng-if="message.f == vm.localUUID">me: </b>
+                <span>{{ message.m }}</span>
+            </li>
+        </ul>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
